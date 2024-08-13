@@ -6,6 +6,7 @@ from fastapi.responses import FileResponse
 import pandas as pd
 
 app = FastAPI()
+df = pd.read_parquet('/home/michael/code/ffapi/data')
 
 #@app.get("/")
 #def read_root():
@@ -15,13 +16,18 @@ app = FastAPI()
 def read_root():
     return FileResponse('index.html')
 
+@app.get('/sample/')
+def sample():
+    sdf = df.sample(n=5)
+    return sdf
+
 @app.get("/movie/{movie_cd}")
 def movie_meta(movie_cd: str):
-    df = pd.read_parquet('/home/michael/code/ffapi/data')
+    #df = pd.read_parquet('/home/michael/code/ffapi/data')
 
     # df에서 movieCd == movie_cd row를 조회
     # 조회된 데이터를 .to_dict()로 만들어 아래에서 return
-    #sdf = df.sample(n=5)
+    sdf = df.sample(n=5)
     
     movie_cd_df = df[df['movieCd'] == movie_cd]
     if movie_cd_df.empty:
